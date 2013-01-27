@@ -28,7 +28,7 @@ def make_tree(nodes):
     
     return root_node
 
-def add_policy(base, nodes, parent):
+def add_policy(base, nodes):
     for rulebase in  base.findall(".//rules"):
         entry = xml.Element("entry")
         rulebase.append(entry)
@@ -44,6 +44,6 @@ nodelist = ['config', 'devices', 'entry', 'vsys', 'entry', 'rulebase', 'security
 policylist = ['option', 'from', 'to', 'source', 'destination', 'source-user', 'category', 'application', 'service', 'hip-profiles', 'log-start', 'log-end', 'log-setting', 'negate-source', 'negate-destination', 'action', 'profile-setting']
 
 config = make_tree(nodelist)
-config = add_policy(config, policylist, 'rules')
+config = add_policy(config, policylist)
 
 print minidom.parseString(xml.tostring(config)).toprettyxml(indent = "   ")
