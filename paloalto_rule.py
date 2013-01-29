@@ -22,20 +22,18 @@ def make_tree(nodes):
     parent_node = root_node
 
     for node in nodes:
-        element = xml.Element(node)
-        parent_node.append(element)
+        element = xml.SubElement(parent_node, node)
         parent_node = element
     
     return root_node
 
 def add_policy(base, nodes):
     for rulebase in  base.findall(".//rules"):
-        entry = xml.Element("entry")
-        rulebase.append(entry)
+        entry = xml.SubElement(rulebase, "entry")
 
         for node in nodes:
-            element = xml.Element(node)
-            entry.append(element)
+            element = xml.SubElement(entry, node)
+
             if node == "option":
                 option = xml.SubElement(element, "disable-server-response-inspection")
             if node == "profile-setting":
