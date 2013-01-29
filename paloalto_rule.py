@@ -36,9 +36,17 @@ def add_policy(base, nodes):
         for node in nodes:
             element = xml.Element(node)
             entry.append(element)
+            if node == "option":
+                option = xml.SubElement(element, "disable-server-response-inspection")
+            if node == "profile-setting":
+                profile = xml.SubElement(element, "profiles")
+                addurl = xml.SubElement(profile, "url-filtering")
+                addfileblock = xml.SubElement(profile, "url-filtering")
+                addvirus = xml.SubElement(profile, "virus")
+                addspy = xml.SubElement(profile, "spyware")
+                addvuln = xml.SubElement(profile, "vulnerability")
 
     return base
-
 
 nodelist = ['config', 'devices', 'entry', 'vsys', 'entry', 'rulebase', 'security', 'rules'] 
 policylist = ['option', 'from', 'to', 'source', 'destination', 'source-user', 'category', 'application', 'service', 'hip-profiles', 'log-start', 'log-end', 'log-setting', 'negate-source', 'negate-destination', 'action', 'profile-setting']
