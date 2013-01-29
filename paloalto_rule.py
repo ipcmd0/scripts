@@ -27,7 +27,7 @@ def make_tree(nodes):
     
     return root_node
 
-def add_policy(base, nodes):
+def policy_structure(base, nodes):
     for rulebase in  base.findall(".//rules"):
         entry = xml.SubElement(rulebase, "entry")
 
@@ -38,18 +38,16 @@ def add_policy(base, nodes):
                 option = xml.SubElement(element, "disable-server-response-inspection")
             if node == "profile-setting":
                 profile = xml.SubElement(element, "profiles")
-                addurl = xml.SubElement(profile, "url-filtering")
-                addfileblock = xml.SubElement(profile, "url-filtering")
-                addvirus = xml.SubElement(profile, "virus")
-                addspy = xml.SubElement(profile, "spyware")
-                addvuln = xml.SubElement(profile, "vulnerability")
+                for item in profilelist:
+                    addurl = xml.SubElement(profile, item)
 
     return base
 
 nodelist = ['config', 'devices', 'entry', 'vsys', 'entry', 'rulebase', 'security', 'rules'] 
 policylist = ['option', 'from', 'to', 'source', 'destination', 'source-user', 'category', 'application', 'service', 'hip-profiles', 'log-start', 'log-end', 'log-setting', 'negate-source', 'negate-destination', 'action', 'profile-setting']
+profilelist = ['url-filtering', 'file-blocking', 'virus', 'spyware', 'vulnerability']
 
 config = make_tree(nodelist)
-config = add_policy(config, policylist)
+config = policy_structure(config, policylist)
 
 print minidom.parseString(xml.tostring(config)).toprettyxml(indent = "   ")
