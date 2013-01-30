@@ -32,17 +32,20 @@ def policy_structure(base, nodes):
                     addprofile = xml.SubElement(profile, item)
     return base
 
-def rule(base):
+#function to name firewall rule
+def rule(base, name):
     for rulebase in base.findall('.//rules/entry'):
-        rulebase.attrib['name'] = "test"
+        rulebase.attrib['name'] = name
     return base
 
+#function to populate the firewall rule with generic information
 def definepolicy(base, node, text):
     for rulebase in base.findall(".//rules/entry/" + node):
         member = xml.SubElement(rulebase, "member")
         member.text = text
     return base
 
+#lists used to feed data to the xml body structure
 nodelist = ['config', 'devices', 'entry', 'vsys', 'entry', 'rulebase', 'security', 'rules'] 
 policylist = ['option', 'from', 'to', 'source', 'destination', 'source-user', 'category', 'application', 'service', 'hip-profiles', 'log-start', 'log-end', 'log-setting', 'negate-source', 'negate-destination', 'action', 'profile-setting']
 profilelist = ['url-filtering', 'file-blocking', 'virus', 'spyware', 'vulnerability']
@@ -50,7 +53,7 @@ genericsettings = ['source-user', 'category', 'application', 'hip-profiles']
 
 config = make_tree(nodelist)
 config = policy_structure(config, policylist)
-config = rule(config)
+config = rule(config, "test")
 config = definepolicy(config, "from", "Untrust")
 config = definepolicy(config, "to", "Trust")
 for item in genericsettings:
