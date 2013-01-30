@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import xml.etree.ElementTree as xml
-from xml.etree import ElementTree
 from xml.dom import minidom
 import sys
 
@@ -27,9 +26,7 @@ def policy_structure(base, nodes):
                 option = xml.SubElement(element, "disable-server-response-inspection")
                 option.text = "no"
             if node == "profile-setting":
-                profile = xml.SubElement(element, "profiles")
-                for item in profilelist:
-                    addprofile = xml.SubElement(profile, item)
+                group = xml.SubElement(element, "group")
     return base
 
 #function to name firewall rule
@@ -48,7 +45,6 @@ def definepolicy(base, node, text):
 #lists used to feed data to the xml body structure
 nodelist = ['config', 'devices', 'entry', 'vsys', 'entry', 'rulebase', 'security', 'rules'] 
 policylist = ['option', 'from', 'to', 'source', 'destination', 'source-user', 'category', 'application', 'service', 'hip-profiles', 'log-start', 'log-end', 'log-setting', 'negate-source', 'negate-destination', 'action', 'profile-setting']
-profilelist = ['url-filtering', 'file-blocking', 'virus', 'spyware', 'vulnerability']
 genericsettings = ['source-user', 'category', 'application', 'hip-profiles']
 
 config = make_tree(nodelist)
