@@ -47,11 +47,33 @@ nodelist = ['config', 'devices', 'entry', 'vsys', 'entry', 'rulebase', 'security
 policylist = ['option', 'from', 'to', 'source', 'destination', 'source-user', 'category', 'application', 'service', 'hip-profiles', 'log-start', 'log-end', 'log-setting', 'negate-source', 'negate-destination', 'action', 'profile-setting']
 genericsettings = ['source-user', 'category', 'application', 'hip-profiles']
 
+
 config = make_tree(nodelist)
+
+#Generic variables for testing, will be replaced with input from file information
+name = "test"
+srcip = "1.1.1.1"
+dstip = "2.2.2.2"
+action = "allow"
+service = "tcp8080"
+
 config = policy_structure(config, policylist)
-config = rule(config, "test")
+config = rule(config, name)
+
+#dynamic information
 config = definepolicy(config, "from", "Untrust")
 config = definepolicy(config, "to", "Trust")
+config = definepolicy(config, "source", srcip)
+config = definepolicy(config, "destination", dstip)
+config = definepolicy(config, "action", action)
+config = definepolicy(config, "service", service)
+
+#static information, see if can be replaced with a key/list
+config = definepolicy(config, "log-start", "no")
+config = definepolicy(config, "log-end", "yes")
+config = definepolicy(config, "negate-source", "no")
+config = definepolicy(config, "negate-destination", "no")
+
 for item in genericsettings:
     config = definepolicy(config, item, "any")
 
