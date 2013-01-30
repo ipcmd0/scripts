@@ -46,11 +46,14 @@ def definepolicy(base, node, text):
 nodelist = ['config', 'devices', 'entry', 'vsys', 'entry', 'rulebase', 'security', 'rules'] 
 policylist = ['option', 'from', 'to', 'source', 'destination', 'source-user', 'category', 'application', 'service', 'hip-profiles', 'log-start', 'log-end', 'log-setting', 'negate-source', 'negate-destination', 'action', 'profile-setting']
 profilelist = ['url-filtering', 'file-blocking', 'virus', 'spyware', 'vulnerability']
+genericsettings = ['source-user', 'category', 'application', 'hip-profiles']
 
 config = make_tree(nodelist)
 config = policy_structure(config, policylist)
 config = rule(config)
 config = definepolicy(config, "from", "Untrust")
 config = definepolicy(config, "to", "Trust")
+for item in genericsettings:
+    config = definepolicy(config, item, "any")
 
 print minidom.parseString(xml.tostring(config)).toprettyxml(indent = "   ")
