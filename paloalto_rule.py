@@ -6,7 +6,7 @@ import sys
 
 #Creates the xml structure of a single policy
 def policy_structure(nodes):
-    root_node = xml.Element("root")
+    root_node = xml.Element("entry")
     root_node.attrib['name'] = rulename
 
     for node in nodes:
@@ -19,20 +19,24 @@ def policy_structure(nodes):
     return root_node
 
 #function to populate the firewall rule with generic information
-def definepolicy(base, node, text):
-    for rulebase in base.findall(".//" + node):
+def member(base, node, attribute):
+    for rulebase in base.findall(node):
         member = xml.SubElement(rulebase, "member")
-        member.text = text
+        member.text = attribute
+    return base
+
+def policyentry(base, node, attribute):
+    for rulebase in base.findall(node):
+        rulebase.text = attribute
     return base
 
 #lists used to feed data to the xml body structure
 nodelist = ['option', 'from', 'to', 'source', 'destination', 'source-user', 'category', 'application', 'service', 'hip-profiles', 'log-start', 'log-end', 'log-setting', 'negate-source', 'negate-destination', 'action', 'profile-setting', 'description']
-genericsettings = ['source-user', 'category', 'application', 'hip-profiles']
 
 
 
 #Generic variables for testing, will be replaced with input from file information
-rulename = "test"
+rulename = "rule1"
 srcip = "1.1.1.1"
 dstip = "2.2.2.2"
 action = "allow"
@@ -40,27 +44,20 @@ service = "tcp8080"
 description = "test"
 srczone = "Trust"
 dstzone = "Untrust"
+description = "testing"
 
 #xpathvalue = /config/devices/entry/vsys/entry/rulebase/security/rules/entry[@name=rulename]
 
 config = policy_structure(nodelist)
-#config = rule(config, name)
 
-#dynamic information
-config = definepolicy(config, "from", "Untrust")
-config = definepolicy(config, "to", "Trust")
-config = definepolicy(config, "source", srcip)
-config = definepolicy(config, "destination", dstip)
-config = definepolicy(config, "action", action)
-config = definepolicy(config, "service", service)
+memberentries = {"from":srczone, "to":dstzone, "source":srcip, "destination":dstip, "service":service, "source-user":"any", "category":"any", "application":"any", "hip-profiles":"any"}
 
-#static information, see if can be replaced with a key/list
-config = definepolicy(config, "log-start", "no")
-config = definepolicy(config, "log-end", "yes")
-config = definepolicy(config, "negate-source", "no")
-config = definepolicy(config, "negate-destination", "no")
+policyentries = {"log-start":"no", "log-end":"yes", "negate-source":"no", "negate-destination":"no", "disable-server-response-inspection":"no", "action":action, "description":description, "group":"profile"}
 
-for item in genericsettings:
-    config = definepolicy(config, item, "any")
+for key, value in memberentries.iteritems():
+    config = member(config, key, value)
+
+for key, value in policyentries.iteritems():
+    config = policyentry(config, key, value)
 
 print xml.tostring(config)
