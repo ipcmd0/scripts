@@ -13,9 +13,11 @@ def policy_structure(nodes):
         element = xml.SubElement(root_node, node)
         if node == "option":
             option = xml.SubElement(element, "disable-server-response-inspection")
+            option.text = "no"
         if node == "profile-setting":
             group = xml.SubElement(element, "group")
-
+            group.text = "Alert"
+    
     return root_node
 
 #function to populate the firewall rule with generic information
@@ -30,29 +32,23 @@ def policyentry(base, node, attribute):
         rulebase.text = attribute
     return base
 
+aclrules = open("access-list")
+
+for line in aclrules:
+    action, protocol, garbage, srczone, garbage, dstzone, srcip, garbage, dstip, port, garbage, description = line.split()
+
+rulename = "rule1"
+service = protocol + port
+
 #lists used to feed data to the xml body structure
 nodelist = ['option', 'from', 'to', 'source', 'destination', 'source-user', 'category', 'application', 'service', 'hip-profiles', 'log-start', 'log-end', 'log-setting', 'negate-source', 'negate-destination', 'action', 'profile-setting', 'description']
 
-
-
-#Generic variables for testing, will be replaced with input from file information
-rulename = "rule1"
-srcip = "1.1.1.1"
-dstip = "2.2.2.2"
-action = "allow"
-service = "tcp8080"
-description = "test"
-srczone = "Trust"
-dstzone = "Untrust"
-description = "testing"
-
 #xpathvalue = /config/devices/entry/vsys/entry/rulebase/security/rules/entry[@name=rulename]
 
-config = policy_structure(nodelist)
-
 memberentries = {"from":srczone, "to":dstzone, "source":srcip, "destination":dstip, "service":service, "source-user":"any", "category":"any", "application":"any", "hip-profiles":"any"}
+policyentries = {"log-start":"no", "log-end":"yes", "negate-source":"no", "negate-destination":"no", "action":action, "description":description}
 
-policyentries = {"log-start":"no", "log-end":"yes", "negate-source":"no", "negate-destination":"no", "disable-server-response-inspection":"no", "action":action, "description":description, "group":"profile"}
+config = policy_structure(nodelist)
 
 for key, value in memberentries.iteritems():
     config = member(config, key, value)
@@ -61,3 +57,4 @@ for key, value in policyentries.iteritems():
     config = policyentry(config, key, value)
 
 print xml.tostring(config)
+
